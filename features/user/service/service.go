@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type userUseCase struct {
@@ -96,63 +95,12 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 }
 
 func (uuc *userUseCase) Update(token interface{}, updatedData user.Core, profilePhoto *multipart.FileHeader) (user.Core, error) {
-	userId := helper.ExtractToken(token)
-	if userId <= 0 {
-		log.Println("extract token error")
-		return user.Core{}, errors.New("extract token error")
-	}
-	if updatedData.Password != "" {
-		hashed, _ := bcrypt.GenerateFromPassword([]byte(updatedData.Password), bcrypt.DefaultCost)
-		updatedData.Password = string(hashed)
-	}
 
-	res, err := uuc.qry.Profile(uint(userId))
-	if err != nil {
-		errmsg := ""
-		if strings.Contains(err.Error(), "not found") {
-			errmsg = "data not found"
-		} else {
-			errmsg = "server problem"
-		}
-		log.Println("error profile query: ", err.Error())
-		return user.Core{}, errors.New(errmsg)
-	}
-
-	if profilePhoto != nil {
-		path, _ := helper.UploadProfilePhotoS3(*profilePhoto, res.Email)
-		updatedData.Image = path
-	}
-
-	res, err = uuc.qry.Update(uint(userId), updatedData)
-	if err != nil {
-		errmsg := ""
-		if strings.Contains(err.Error(), "not found") {
-			errmsg = "data not found"
-		} else {
-			errmsg = "server problem"
-		}
-		log.Println("error update query: ", err.Error())
-		return user.Core{}, errors.New(errmsg)
-	}
-	return res, nil
+	return user.Core{}, nil
 }
 
 func (uuc *userUseCase) Delete(token interface{}) error {
 
-	id := helper.ExtractToken(token)
-	if id <= 0 {
-		return errors.New("user not found")
-	}
-	err := uuc.qry.Delete(uint(id))
-	if err != nil {
-		msg := ""
-		if strings.Contains(err.Error(), "not found") {
-			msg = "data tidak ditemukan"
-		} else {
-			msg = "internal server error"
-		}
-		return errors.New(msg)
-	}
 	return nil
 
 }

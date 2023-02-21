@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"sewabuku/features/user"
 	"sewabuku/helper"
@@ -48,7 +49,17 @@ func (uc *userControll) Register() echo.HandlerFunc {
 	}
 }
 func (uc *userControll) Profile() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+
+		res, err := uc.srv.Profile(token)
+		if err != nil {
+			fmt.Println("ini error")
+			return c.JSON(helper.PrintErrorResponse(err.Error()))
+		}
+		dataResp := ToResponse(res)
+		return c.JSON(helper.PrintSuccessReponse(http.StatusOK, "berhasil lihat profil", dataResp))
+	}
 }
 
 func (uc *userControll) Update() echo.HandlerFunc {
