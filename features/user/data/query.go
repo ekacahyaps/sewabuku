@@ -55,5 +55,19 @@ func (uq *userQuery) Update(id uint, updatedData user.Core) (user.Core, error) {
 }
 
 func (uq *userQuery) Delete(id uint) error {
+	users := User{}
+
+	delete := uq.db.Delete(&users, id)
+
+	if delete.Error != nil {
+		log.Println("Get By ID query error", delete.Error.Error())
+		return delete.Error
+	}
+
+	if delete.RowsAffected < 0 {
+		log.Println("Rows affected delete error")
+		return errors.New("user not found")
+	}
+
 	return nil
 }

@@ -67,5 +67,13 @@ func (uc *userControll) Update() echo.HandlerFunc {
 }
 
 func (uc *userControll) Delete() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		tx := c.Get("user")
+		err := uc.srv.Delete(tx)
+
+		if err != nil {
+			return c.JSON(helper.PrintErrorResponse(err.Error()))
+		}
+		return c.JSON(helper.PrintSuccessReponse(http.StatusOK, "berhasil hapus"))
+	}
 }
