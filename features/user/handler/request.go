@@ -21,7 +21,7 @@ type UpdateRequest struct {
 	Hp       string `json:"hp" form:"hp"`
 	Address  string `json:"address" form:"address"`
 	Password string `json:"password" form:"password"`
-	Image    string `form:"image"`
+	Photo    string `form:"photo"`
 }
 
 func ToCore(data interface{}) *user.Core {
@@ -46,7 +46,7 @@ func ToCore(data interface{}) *user.Core {
 		res.Password = cnv.Password
 		res.Address = cnv.Address
 		res.HP = cnv.Hp
-		res.Image = cnv.Image
+		res.Photo = cnv.Photo
 	default:
 		return nil
 	}

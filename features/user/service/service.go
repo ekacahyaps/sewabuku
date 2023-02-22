@@ -121,7 +121,7 @@ func (uuc *userUseCase) Update(token interface{}, updatedData user.Core, profile
 
 	if profilePhoto != nil {
 		path, _ := helper.UploadProfilePhotoS3(*profilePhoto, res.Email)
-		updatedData.Image = path
+		updatedData.Photo = path
 	}
 
 	res, err = uuc.qry.Update(uint(userId), updatedData)
