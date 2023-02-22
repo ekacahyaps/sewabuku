@@ -2,9 +2,12 @@ package handler
 
 import (
 	"fmt"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"sewabuku/features/user"
 	"sewabuku/helper"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -63,7 +66,38 @@ func (uc *userControll) Profile() echo.HandlerFunc {
 }
 
 func (uc *userControll) Update() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		var profilePhoto *multipart.FileHeader
+
+		updatedData := RegisterRequest{}
+		if err := c.Bind(&updatedData); err != nil {
+			return c.JSON(http.StatusBadRequest, "wrong input format")
+		}
+		file, err := c.FormFile("image")
+		if file != nil && err == nil {
+			profilePhoto = file
+		} else if file != nil && err != nil {
+			log.Println("error read profile_photo")
+			return c.JSON(http.StatusBadRequest, helper.ErrorResponse("wrong image input"))
+		}
+
+		res, err := uc.srv.Update(token, *ToCore(updatedData), profilePhoto)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				log.Println("user not found: ", err.Error())
+				return c.JSON(http.StatusNotFound, helper.ErrorResponse("user not found"))
+			} else {
+				log.Println("error update service: ", err.Error())
+				return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+			}
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    ToResponse(res),
+			"message": "success update user's data",
+		})
+	}
 }
 
 func (uc *userControll) Delete() echo.HandlerFunc {
