@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"log"
 	"sewabuku/features/book"
 
@@ -70,5 +71,20 @@ func (bd *bookData) Update(userId uint, bookId uint, updateBook book.Core) (book
 }
 
 func (bd *bookData) Delete(userId, bookId uint) error {
+	qry := bd.db.Where("user_id = ?", userId).Delete(&Book{}, bookId)
+
+	affrows := qry.RowsAffected
+
+	if affrows == 0 {
+		log.Println("no rows affected")
+		return errors.New("data not found")
+	}
+
+	err := qry.Error
+	if err != nil {
+		log.Println("delete book query error")
+		return errors.New("data not found")
+	}
+
 	return nil
 }

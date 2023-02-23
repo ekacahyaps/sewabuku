@@ -104,5 +104,21 @@ func (bh *bookHdl) Update() echo.HandlerFunc {
 }
 
 func (bh *bookHdl) Delete() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		input := c.Param("id")
+		cnv, err := strconv.Atoi(input)
+		if err != nil {
+			log.Println("delete book param error")
+			return c.JSON(http.StatusBadRequest, "id buku salah")
+		}
+
+		err2 := bh.srv.Delete(token, uint(cnv))
+		if err2 != nil {
+			log.Println("error running delete book service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+
+		return c.JSON(http.StatusOK, "success delete book")
+	}
 }

@@ -88,5 +88,20 @@ func (bs *bookSrv) Update(token interface{}, bookId uint, updateBook book.Core, 
 }
 
 func (bs *bookSrv) Delete(token interface{}, bookId uint) error {
+	userID := helper.ExtractToken(token)
+	if userID <= 0 {
+		return errors.New("user not found")
+	}
+
+	err := bs.data.Delete(uint(userID), bookId)
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "book not found"
+		} else {
+			msg = "server problem"
+		}
+		return errors.New(msg)
+	}
 	return nil
 }
