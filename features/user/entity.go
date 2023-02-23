@@ -12,7 +12,7 @@ type Core struct {
 	HP       string
 	Email    string `validate:"required,email"`
 	Address  string
-	Image    string
+	Photo    string
 	Password string `validate:"required"`
 }
 

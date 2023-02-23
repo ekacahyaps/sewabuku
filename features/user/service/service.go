@@ -96,6 +96,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 }
 
 func (uuc *userUseCase) Update(token interface{}, updatedData user.Core, profilePhoto *multipart.FileHeader) (user.Core, error) {
+
 	userId := helper.ExtractToken(token)
 	if userId <= 0 {
 		log.Println("extract token error")
@@ -120,7 +121,7 @@ func (uuc *userUseCase) Update(token interface{}, updatedData user.Core, profile
 
 	if profilePhoto != nil {
 		path, _ := helper.UploadProfilePhotoS3(*profilePhoto, res.Email)
-		updatedData.Image = path
+		updatedData.Photo = path
 	}
 
 	res, err = uuc.qry.Update(uint(userId), updatedData)

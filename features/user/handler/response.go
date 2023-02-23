@@ -7,7 +7,7 @@ type UserReponse struct {
 	Email   string `json:"email"`
 	HP      string `json:"hp"`
 	Address string `json:"address"`
-	Image   string `json:"image"`
+	Photo   string `json:"photo"`
 }
 
 type RegisterResponse struct {
@@ -21,7 +21,7 @@ func ToResponse(data user.Core) UserReponse {
 		Email:   data.Email,
 		HP:      data.HP,
 		Address: data.Address,
-		Image:   data.Image,
+		Photo:   data.Photo,
 	}
 }
 
