@@ -42,3 +42,33 @@ func CoreToData(data book.Core) Book {
 		UserId:      data.UserId,
 	}
 }
+
+type AllBook struct {
+	ID          uint
+	Title       string
+	Author      string
+	Year        uint
+	Price       uint
+	Description string
+	Image       string
+}
+
+func (dataModel *AllBook) AllBooksToCore() book.Core {
+	return book.Core{
+		ID:          dataModel.ID,
+		Title:       dataModel.Title,
+		Author:      dataModel.Author,
+		Year:        dataModel.Year,
+		Price:       dataModel.Price,
+		Description: dataModel.Description,
+		Image:       dataModel.Image,
+	}
+}
+
+func ListAllBooksToCore(dataModels []AllBook) []book.Core {
+	var dataCore []book.Core
+	for _, value := range dataModels {
+		dataCore = append(dataCore, value.AllBooksToCore())
+	}
+	return dataCore
+}

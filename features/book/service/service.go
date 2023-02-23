@@ -47,7 +47,17 @@ func (bs *bookSrv) Add(token interface{}, newBook book.Core, image *multipart.Fi
 }
 
 func (bs *bookSrv) AllBooks() ([]book.Core, error) {
-	return []book.Core{}, nil
+	res, err := bs.data.AllBooks()
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return []book.Core{}, errors.New(msg)
+	}
+	return res, nil
 }
 
 func (bs *bookSrv) MyBooks(token interface{}) ([]book.Core, error) {

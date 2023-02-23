@@ -52,7 +52,19 @@ func (bh *bookHdl) Add() echo.HandlerFunc {
 }
 
 func (bh *bookHdl) AllBooks() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+
+		res, err := bh.srv.AllBooks()
+		if err != nil {
+			log.Println("error running allproducts service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    ListAllBooksToResponse(res),
+			"message": "success show all products",
+		})
+	}
 }
 
 func (bh *bookHdl) MyBooks() echo.HandlerFunc {
