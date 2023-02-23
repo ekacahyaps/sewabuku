@@ -69,7 +69,18 @@ func (bs *bookSrv) BooksRented(token interface{}) ([]book.Core, error) {
 }
 
 func (bs *bookSrv) BooksDetail(token interface{}, bookId uint) (book.Core, error) {
-	return book.Core{}, nil
+	userID := helper.ExtractToken(token)
+	res, err := bs.data.BooksDetail(uint(userID), bookId)
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return book.Core{}, errors.New(msg)
+	}
+	return res, nil
 }
 
 func (bs *bookSrv) Update(token interface{}, bookId uint, updateBook book.Core, updateImage *multipart.FileHeader) (book.Core, error) {

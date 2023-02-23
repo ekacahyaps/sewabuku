@@ -54,7 +54,15 @@ func (bd *bookData) BooksRented(userId uint) ([]book.Core, error) {
 }
 
 func (bd *bookData) BooksDetail(userId, bookId uint) (book.Core, error) {
-	return book.Core{}, nil
+	res := Book{}
+
+	err := bd.db.Where("id = ? AND user_id = ?", bookId, userId).First(&res).Error
+	if err != nil {
+		log.Println("Get Book Detail query error")
+		return book.Core{}, err
+	}
+
+	return DataToCore(res), nil
 }
 
 func (bd *bookData) Update(userId uint, bookId uint, updateBook book.Core) (book.Core, error) {

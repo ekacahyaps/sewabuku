@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sewabuku/features/book"
 	"sewabuku/helper"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -76,7 +77,26 @@ func (bh *bookHdl) BooksRented() echo.HandlerFunc {
 }
 
 func (bh *bookHdl) BooksDetail() echo.HandlerFunc {
-	return nil
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		input := c.Param("id")
+		cnv, err := strconv.Atoi(input)
+		if err != nil {
+			log.Println("Books detail param error")
+			return c.JSON(http.StatusBadRequest, "wrong product id")
+		}
+
+		res, err := bh.srv.BooksDetail(token, uint(cnv))
+		if err != nil {
+			log.Println("error running Book's detail service")
+			return c.JSON(http.StatusInternalServerError, helper.ErrorResponse("server problem"))
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"data":    AddBookToResponse(res),
+			"message": "success show book's detail",
+		})
+	}
 }
 
 func (bh *bookHdl) Update() echo.HandlerFunc {
