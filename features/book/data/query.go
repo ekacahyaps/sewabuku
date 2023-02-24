@@ -47,7 +47,15 @@ func (bd *bookData) AllBooks() ([]book.Core, error) {
 }
 
 func (bd *bookData) MyBooks(userId uint) ([]book.Core, error) {
-	return []book.Core{}, nil
+	allProducts := []AllBook{}
+
+	err := bd.db.Raw("SELECT books.id, books.title, books.author, books.year, books.price, books.description, books.image FROM books WHERE books.deleted_at is NULL AND books.user_id = ?", userId).Scan(&allProducts).Error
+	if err != nil {
+		log.Println("all books query error")
+		return []book.Core{}, err
+	}
+
+	return ListAllBooksToCore(allProducts), nil
 }
 
 func (bd *bookData) BooksRented(userId uint) ([]book.Core, error) {

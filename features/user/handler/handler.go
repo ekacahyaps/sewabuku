@@ -74,7 +74,7 @@ func (uc *userControll) Update() echo.HandlerFunc {
 		if err := c.Bind(&updatedData); err != nil {
 			return c.JSON(http.StatusBadRequest, "wrong input format")
 		}
-		file, err := c.FormFile("image")
+		file, err := c.FormFile("photo")
 		if file != nil && err == nil {
 			profilePhoto = file
 		} else if file != nil && err != nil {

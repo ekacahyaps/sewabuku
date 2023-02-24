@@ -61,7 +61,18 @@ func (bs *bookSrv) AllBooks() ([]book.Core, error) {
 }
 
 func (bs *bookSrv) MyBooks(token interface{}) ([]book.Core, error) {
-	return []book.Core{}, nil
+	userId := helper.ExtractToken(token)
+	res, err := bs.data.MyBooks(uint(userId))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data not found"
+		} else {
+			msg = "server problem"
+		}
+		return []book.Core{}, errors.New(msg)
+	}
+	return res, nil
 }
 
 func (bs *bookSrv) BooksRented(token interface{}) ([]book.Core, error) {
