@@ -1,0 +1,925 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: SewaBuku API
+  description: Design API for book rental app
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ekacahyaps/SewaBuku/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/ekacahyaps/pinjambuku/1.0.0
+  - description: digunakan untuk mengakses API
+    url: https://www.devmyproject.site
+    
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@alta.id
+                password:
+                  type: string
+                  example: pass12345
+      responses:
+        '200':
+          description: login succes
+          content:
+            application.json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                          id :
+                            type: integer
+                          name:
+                            type: string
+                          email:
+                            type: string 
+                  token:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  data:
+                    id: 2
+                    name: Alex
+                    email: MyEmail@gmail.com
+                  token: 12344567890qwertyuiop
+                  message: login successfully
+                      
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+  /register:
+    post:
+      tags:
+        - Users
+      summary: register new user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsersSchema'
+      responses:
+        '201':
+          description: successfully register user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: successfully register user
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+  
+  /users:
+    get:
+      tags:
+        - Users
+      summary: user's profile
+      description: digunakan untuk melihat profil pengguna
+      security:
+        - jwt_auth: []
+      responses:
+        '200':
+          description: get user profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Putra
+                      email:
+                        type: string
+                        example: Putra@gmail.com
+                      hp:
+                        type: string
+                        example: "08123456789"
+                      address:
+                        type: string
+                        example: Mojokerto
+                      photo:
+                        type: string 
+                        example : image1.jpg
+                        
+                  message:
+                    type: string
+                    example: successfully get user profile
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    put:
+      tags:
+        - Users
+      summary: update user's profile
+      description: digunakan untuk mengedit profil/data pengguna
+      security:
+        - jwt_auth: []
+      
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UsersUpdateSchema'
+      responses:
+      
+        '200':
+          description: update user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Putra
+                      hp:
+                        type: string
+                        example: "0812345678"
+                      email:
+                        type: string
+                        example: Putra@gmail.com
+                      address:
+                        type: string
+                        example: Mojokerto
+                      photo:
+                        type: string
+                        example: example.s3.aws.com/users/image
+                  message:
+                    type: string
+                    example: successfully updated user
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    delete:
+      tags:
+        - Users
+      summary: delete user's account
+      security:
+        - jwt_auth: []
+      
+      responses:
+        '200':
+          description: register user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: successfully deleted user
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+  /mybooks:
+    get:
+      tags:
+        - Users
+      summary: list of my books
+      security:
+        - jwt_auth: []
+      
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProductSchema'
+        
+  /books:
+    post:
+      tags:
+        - Books
+      summary: add book
+      security:
+        - jwt_auth: []
+      
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BookSchema'
+                
+      responses:
+        '201':
+          description: add new product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: Habis gelap terbitlah terang
+                      author:
+                        type: string
+                        example: Kartini
+                      year:
+                        type: integer
+                        example: 1960
+                      price:
+                        type: integer
+                        example: 5000
+                      description:
+                        type: string
+                        example: buku karangan RA Kartini
+                      image:
+                        type: string
+                        example: example.s3.aws.com/book/lkdjaklfjd
+                  message:
+                    type: string
+                    example: successfully add book
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    get:
+      tags:
+        - Books
+      summary: show all books
+      description: digunakan untuk menampilkan semua buku, tidak perlu login
+      responses:
+        '200':
+          description: success get all books
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfProductSchema'
+                
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+
+  /booksrented:
+    get:
+      tags:
+        - Books
+      summary: show my books that rented
+      description: digunakan untuk menampilkan semua buku yang disewa
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfRentedbySchema'
+                
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+
+  /books/{books_id}:
+    get:
+      tags:
+        - Books
+      summary: show a book's detail
+      parameters:
+        - in: path
+          name: books_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: success get a book by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      owner_id:
+                        type: integer
+                        example: 1
+                      owner_name:
+                        type: string
+                        example: Putra
+                      title:
+                        type: string
+                        example: Habis gelap terbitlah terang
+                      author:
+                        type: string
+                        example: Kartini
+                      year:
+                        type: integer
+                        example: 1960
+                      price:
+                        type: integer
+                        example: 5000
+                      description:
+                        type: string
+                      image:
+                        type: string
+                  message: 
+                    type: string
+                    example: successfully get book by id
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    put:
+      tags:
+        - Books
+      summary: update a book's data
+      security:
+        - jwt_auth: []
+      
+      parameters:
+        - in: path
+          name: books_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BookSchema'
+      responses:
+        '200':
+          description: success update a book's data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: Habis gelap terbitlah terang
+                      author:
+                        type: string
+                        example: Kartini
+                      year:
+                        type: integer
+                        example: 1960
+                      price:
+                        type: integer
+                        example: 5000
+                      description:
+                        type: string
+                      image:
+                        type: string
+                  message:
+                    type: string
+                    example: successfully updated book detail
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    delete:
+      tags:
+        - Books
+      summary: delete a book
+      security:
+        - jwt_auth: []
+      
+      parameters:
+        - in: path
+          name: books_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: success delete a book
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: successfully delete book
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+  /cart:
+    post:
+      tags:
+        - Cart
+      summary: add a cart
+      security:
+        - jwt_auth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartSchema'
+      responses:
+        '201':
+          description: add product to cart add
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      book_id : 
+                        type: integer
+                        example: 1
+                  message:
+                    type: string
+                    example: successfully add to cart
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    get:
+      tags:
+        - Cart
+      summary: show cart's detail
+      security:
+        - jwt_auth: []
+      responses:
+        '200':
+          description: get all cart
+          content:
+            application/json:
+              schema:
+               type: object
+               properties:
+                data:
+                  type: object
+                  properties:
+                      id:
+                        type: integer
+                      total__rent_price:
+                        type: integer
+                      books:
+                        type: array
+                        items:
+                          type: object
+                message:
+                  type: string
+              example:
+                data:
+                  id: 1
+                  total_rent_price: 8000
+                  books:
+                    - id : 1
+                      rent_price : 5000
+                      title : Habis gelap terbitlah terang
+                      image : product01.jpg
+                    - id : 2
+                      rent_price : 3000
+                      title : Dongeng si kancil
+                      image : product02.jpg
+                message : successfully get all cart
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+  /cart/{cart_id}:
+    delete:
+      tags:
+        - Cart
+      summary: delete a cart
+      security:
+        - jwt_auth: []
+      parameters:
+        - in: path
+          name: cart_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      responses:
+        '200':
+          description: delet cart
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: successfully delete cart
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+  /order:
+    post:
+      tags:
+        - Order
+      summary: make an order
+      security:
+        - jwt_auth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderSchema'
+      responses:
+        '201':
+          description: add order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id : 
+                        type: integer
+                        example: 1
+                      renter_id:
+                        type: integer
+                        example: 2
+                      total_rent_price:
+                        type: integer
+                        example: 8000
+                      created_at:
+                        type: string
+                        example: 2023-03-01
+                      return_date:
+                        type: string
+                        example: 2023-03-15
+                      payment_url:
+                        type: string
+                        example: https://app.sandbox.xendit.com/snap/v3/redirection/b7583973ba-f2ef-4e57-bd89-b3a197bba553
+                      status:
+                        type: string
+                        example: waiting for payment
+                  message:
+                    type: string
+                    example: successfully add order
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+    get:
+      tags:
+        - Order
+      summary: show order's history
+      description: daftar riwayat pesanan
+      security:
+        - jwt_auth: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id :
+                          type: integer
+                          example: 1
+                        total_rent_price:
+                          type: integer
+                          example: 8000
+                        created_at:
+                          type: string
+                          example: "2023-03-01"
+                        return_date:
+                          type: string
+                          example: 2023-03-15
+                        status: 
+                          type: string
+                          example: success
+                        books:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              book_id: 
+                                type: integer
+                              title: 
+                                type : string
+                              author:
+                                type : string
+                              year:
+                                type : integer
+                              price: 
+                                type: integer
+                              image :
+                                type: string
+                          example:
+                            - book_id: 1
+                              title: Habis gelap terbitlah terang
+                              author: RA Kartini
+                              year: 1960
+                              price: 5000
+                              image: example.s3.aws.com/books/kdjflaj
+                              owner_name: Putra
+                            - book_id: 2
+                              title: Dongeng si kancil
+                              author: Budi
+                              year: 1980
+                              price: 3000
+                              image: example.s3.aws.com/books/kljhgd
+                              owner_name: Putra
+                  message:
+                    type: string
+                    example: successfully show order history
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+          
+  /order/{order_id}:
+    put:
+      tags:
+        - Order
+      summary: edit status of an order
+      description: order ini statusnya cancel atau tidak
+      security:
+        - jwt_auth: []
+      parameters:
+        - in: path
+          name: order_id
+          schema:
+            type: number
+            example: 1
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: cancel
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: cancel
+                  message:
+                    type: string
+                    example: successfully updated order
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+  /notification:
+    post:
+      tags:
+        - Order
+      summary: handle notification from payment gateway
+      security:
+        - jwt_auth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order_id:
+                  type: string
+                  example: transaction-01
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: success handle payment notification
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+          
+components:
+  securitySchemes:
+    jwt_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "used JWT token for Auth"
+  responses:
+    Response400:
+      description: bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Bad Request
+    Response500:
+      description: server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: server error
+  schemas:
+    UsersSchema:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Putra
+        hp:
+          type: string
+          example : "081234567897"
+        email:
+          type: string
+          example: Putra@gmail.com
+        address:
+          type: string
+          example: Mojokerto
+        password:
+          type: string
+          example: qwert54321
+    UsersUpdateSchema:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Jhony
+        hp:
+          type: string
+          example : 081234567897
+        email:
+          type: string
+          example: user@alta.id
+        address:
+          type: string
+          example: Jl. Merdeka 10, Jakarta
+        photo:
+          type: string
+          example: image22.jpg
+        password:
+          type: string
+          example: qwert54321
+    BookSchema:
+      type: object
+      properties:
+            title:
+              type: string
+              example: Habis gelap terbitlah terang
+            author:
+              type: string
+              example: Kartini
+            year:
+              type: integer
+              example: 1960
+            price:
+              type: integer
+              example: 5000
+            description:
+              type: string
+            image:
+              type: string
+        
+    ArrayOfProductSchema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        message:
+          type: string
+      example:
+        data:
+          - id : 1
+            title : Habis gelap terbitlah terang
+            author: Kartini
+            year: 1960
+            price : 5000
+            image : product01.jpg
+          - id : 2
+            title : Dongeng si kancil
+            author : Budi
+            year : 1980
+            price : 3000
+            image : product02.jpg
+        message: successfully get all books
+
+    ArrayOfRentedbySchema:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        message:
+          type: string
+      example:
+        data:
+          - id : 1
+            title : Habis gelap terbitlah terang
+            author: Kartini
+            year: 1960
+            price : 5000
+            image : product01.jpg
+            renter_name: Andi
+          - id : 2
+            title : Dongeng si kancil
+            author : Budi
+            year : 1980
+            price : 3000
+            image : product02.jpg
+            renter_name: Andi
+        message: successfully get my books
+
+    CartSchema:
+      type: object
+      required:
+        - books_id
+      properties:
+        books_id:
+          type: integer
+          example: 1
+            
+    OrderSchema:
+      type: object
+      properties:
+          cart_id:
+            type: integer
+            example: 1
