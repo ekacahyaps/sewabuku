@@ -24,7 +24,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_IMAGE }}:latest
+          tags: ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGE }}:latest
       - 
         name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.7
@@ -37,8 +37,8 @@ jobs:
             touch message.txt
             echo "Successfully" >> message.txt
             sudo chmod 777 /var/run/docker.sock
-            docker stop ${{ secrets.DOCKER_CONTAINER }}
-            docker rm ${{ secrets.DOCKER_CONTAINER }}
-            docker rmi ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_IMAGE }}:latest
-            docker pull ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_IMAGE }}:latest
-            docker run --name ${{ secrets.CONTAINER }} -p 80:8000 -d -e DBUSER=${{ secrets.DBUSER }} -e DBPASS=${{ secrets.DBPASS }} -e DBHOST=${{ secrets.DBHOST }} -e DBNAME=${{ secrets.DBNAME }} -e DBPORT=${{ secrets.DBPORT }} -e JWT_KEY="${{ secrets.JWTKEY }}" -e KEYID=${{ secrets.S3_KEYID }} -e ACCESSKEY=${{ secrets.S3_ACCESSKEY }} --link  ${{ secrets.DBHOST }} ${{ secrets.DOCKER_USER }}/${{ secrets.DOCKER_IMAGE }}
+            docker stop ${{ secrets.CONTAINER }}
+            docker rm ${{ secrets.CONTAINER }}
+            docker rmi ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGE }}:latest
+            docker pull ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGE }}:latest
+            docker run --name ${{ secrets.CONTAINER }} -p 80:8000 -d -e DBUSER=${{ secrets.DBUSER }} -e DBPASS=${{ secrets.DBPASS }} -e DBHOST=${{ secrets.DBHOST }} -e DBNAME=${{ secrets.DBNAME }} -e DBPORT=${{ secrets.DBPORT }} -e JWT_KEY="${{ secrets.JWTKEY }}" -e KEYID=${{ secrets.S3_KEYID }} -e ACCESSKEY=${{ secrets.S3_ACCESSKEY }} --link  ${{ secrets.DBHOST }} ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGE }}
